@@ -1,7 +1,4 @@
 public class UnionFind {
-    /**
-     * @Author virgil wu.
-     */
     private int parent[];
 
     /* Creates a UnionFind data structure holding n vertices. Initially, all
