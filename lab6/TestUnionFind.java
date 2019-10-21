@@ -23,7 +23,5 @@ public class TestUnionFind {
         assertTrue(uf.connected(1, 3));
 
         assertEquals(3, uf.find(0));
-
     }
-
 }
