@@ -1,5 +1,6 @@
 package hw2;
 
+import edu.princeton.cs.algs4.Stopwatch;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -7,13 +8,13 @@ public class Percolation {
     private int size;
     private int top;
     private int bottom;
+    private int numOpenSites = 0;
     private WeightedQuickUnionUF uf;
     private WeightedQuickUnionUF ufTopOnly;
-    private int numOpenSites = 0;
 
     public Percolation(int N) {
         // create N-by-N grid, with all sites initially blocked
-        if (N <= 0) {
+        if (N < 0) {
             throw new IllegalArgumentException();
         }
 
@@ -27,13 +28,38 @@ public class Percolation {
 
     public void open(int row, int col) {
         // open the site (row, col) if it is not open already
-        validate(row, col);
-        if (!isOpen(row, col)) {
-            grid[row][col] = true;
-            numOpenSites += 1;
+        if (!grid[row][col]) {
+           grid[row][col] = true;
+           numOpenSites += 1;
         }
+
         if (row == 0) {
             uf.union(xyTo1D(row, col), top);
+            ufTopOnly.union(xyTo1D(row, col), top);
+        }
+
+        if (row == size -1) {
+            uf.union(xyTo1D(row, col), bottom);
+        }
+
+        if (row > 0 && isOpen(row - 1, col)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+            ufTopOnly.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+        }
+
+        if (row < size - 1 && isOpen(row + 1, col)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row + 1, col));
+            ufTopOnly.union(xyTo1D(row, col), xyTo1D(row + 1, col));
+        }
+
+        if (col > 0 && isOpen(row, col - 1)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+            ufTopOnly.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+        }
+
+        if (col < size - 1 && isOpen(row, col + 1)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+            ufTopOnly.union(xyTo1D(row, col), xyTo1D(row, col + 1));
         }
     }
 
@@ -41,21 +67,12 @@ public class Percolation {
         return row * size + col + 1;
     }
 
-    private void validate (int row, int col) {
-        if (row < 0 || col < 0 || row >= size || col >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
     public boolean isOpen(int row, int col) {
         // is the site (row, col) open?
-        validate(row, col);
         return grid[row][col];
     }
 
     public boolean isFull(int row, int col) {
-        // is the site (row, col) full?
-        validate(row, col);
         return ufTopOnly.connected(xyTo1D(row, col), top);
     }
 
@@ -66,7 +83,7 @@ public class Percolation {
 
     public boolean percolates() {
         // does the system percolate?
-        return uf.connected(bottom,top);
+        return uf.connected(top, bottom);
     }
 
     public static void main(String[] args) {
