@@ -118,6 +118,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B <K, V>{
     }
 
     private void printInOrder(Node x) {
+        if (x == null) {
+            return;
+        }
         if (x.left == null && x.right == null) {
             printNode(x);
         } else if (x.left == null) {
@@ -136,14 +139,5 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B <K, V>{
     private void printNode(Node x) {
         System.out.print(x.key);
         System.out.println(" " + x.value);
-    }
-
-    public static void main(String[] args) {
-        BSTMap<String, Integer> bstmap = new BSTMap<>();
-        bstmap.put("sumomo", 1);
-        bstmap.put("momo", 2);
-        bstmap.put("mo", 2);
-        bstmap.put("uchi", 1);
-        bstmap.printInOrder();
     }
 }
