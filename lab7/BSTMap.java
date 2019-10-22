@@ -1,12 +1,12 @@
 import java.util.Iterator;
 import java.util.Set;
 
-public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
-    public class Node {
-        private K key;
-        private V value;
+public class BSTMap<K extends Comparable<K>, V> implements Map61B <K, V>{
+    private class Node {
+        private K key; // sorted by key
+        private V value; //  associated date
+        private Node left, right; // left and right subtrees
         private int size;
-        private Node left, right;
 
         private Node(K k, V v) {
             key = k;
@@ -17,22 +17,15 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
 
     private Node root;
 
-    /** Removes all of the mappings from this map. */
     @Override
     public void clear() {
         root = null;
     }
 
-    /* Returns true if this map contains a mapping for the specified key. */
     @Override
-    public boolean containsKey(K key) {
-        return get(key) != null;
-    }
-
     /* Returns the value to which the specified key is mapped, or null if this
      * map contains no mapping for the key.
      */
-    @Override
     public V get(K key) {
         return get(root, key);
     }
@@ -52,8 +45,8 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         }
     }
 
+     @Override
     /* Returns the number of key-value mappings in this map. */
-    @Override
     public int size() {
         return size(root);
     }
@@ -65,8 +58,9 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         return x.size;
     }
 
-    /* Associates the specified value with the specified key in this map. */
+
     @Override
+    /* Associates the specified value with the specified key in this map. */
     public void put(K key, V value) {
         root = put(root, key, value);
     }
@@ -75,6 +69,7 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         if (x == null) {
             return new Node(key, value);
         }
+
         int cmp = key.compareTo(x.key);
         if (cmp < 0) {
             x.left = put(x.left, key, value);
@@ -85,6 +80,12 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         }
         x.size = size(x.left) + size(x.right) + 1;
         return x;
+    }
+
+    @Override
+    /* Returns true if this map contains a mapping for the specified key. */
+    public boolean containsKey(K key) {
+        return get(key) != null;
     }
 
     @Override
@@ -101,7 +102,6 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         throw new UnsupportedOperationException();
     }
 
-    @Override
     /* Removes the entry for the specified key only if it is currently mapped to
      * the specified value. Not required for Lab 8. If you don't implement this,
      * throw an UnsupportedOperationException.*/
@@ -109,12 +109,41 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException();
     }
 
     public void printInOrder() {
+        printInOrder(root);
+    }
 
+    private void printInOrder(Node x) {
+        if (x.left == null && x.right == null) {
+            printNode(x);
+        } else if (x.left == null) {
+            printNode(x);
+            printInOrder(x.right);
+        } else if (x.right == null) {
+            printInOrder(x.left);
+            printNode(x);
+        } else {
+            printInOrder(x.left);
+            printNode(x);
+            printInOrder(x.right);
+        }
+    }
+
+    private void printNode(Node x) {
+        System.out.print(x.key);
+        System.out.println(" " + x.value);
+    }
+
+    public static void main(String[] args) {
+        BSTMap<String, Integer> bstmap = new BSTMap<>();
+        bstmap.put("sumomo", 1);
+        bstmap.put("momo", 2);
+        bstmap.put("mo", 2);
+        bstmap.put("uchi", 1);
+        bstmap.printInOrder();
     }
 }
